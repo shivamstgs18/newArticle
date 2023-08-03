@@ -1,0 +1,11 @@
+<h1><%= @user.username%>'s profile</h1>
+
+<h3>Articles</h3>
+
+<div>
+<%= link_to "Edit your profile", edit_user_path(@user)%> | <%= link_to 'Return to articles listing', articles_path %>
+</div>
+
+
+
+<%= render 'articles/article'%>
