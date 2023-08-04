@@ -1,8 +1,15 @@
 class ArticlesController < ApplicationController
+  before_action :set_article, only: [:show, :edit, :update, :destroy]
+
+  # ... (existing actions and methods)
 
   def show
-    @article=Article.includes(:likes).find(params[:id])
     @article.increment_views
+
+    respond_to do |format|
+      format.html # This will be handled later or can be removed if not required
+      format.json { render json: @article }
+    end
   end
 
   def index
@@ -11,59 +18,72 @@ class ArticlesController < ApplicationController
     else
       @articles = Article.all
     end
+
+    respond_to do |format|
+      format.html # This will be handled later or can be removed if not required
+      format.json { render json: @articles }
+    end
   end
 
   def new
-    @article=Article.new
+    @article = Article.new
+    respond_to do |format|
+      format.html # This will be handled later or can be removed if not required
+      format.json { render json: @article }
+    end
   end
 
   def edit
-    @article=Article.find(params[:id])
+    respond_to do |format|
+      format.html # This will be handled later or can be removed if not required
+      format.json { render json: @article }
+    end
   end
 
   def create
-    @article= Article.new(params.require(:article).permit(:title, :description, :topic))
-    @article.user=current_user
-    if @article.save
-      flash[:notice]="Article was created successfully."
-      redirect_to @article
-    else
-      render 'new'
+    @article = Article.new(article_params)
+    @article.user = current_user
+
+    respond_to do |format|
+      if @article.save
+        format.html { redirect_to @article, notice: 'Article was created successfully.' }
+        format.json { render json: @article, status: :created, location: @article }
+      else
+        format.html { render 'new' }
+        format.json { render json: @article.errors, status: :unprocessable_entity }
+      end
     end
   end
 
   def update
-    @article=Article.find(params[:id])
-    if @article.update(params.require(:article).permit(:title, :description, :topic))
-      flash[:notice]="Article was updated succesfully"
-      redirect_to @article
-    else
-      render 'edit'
+    respond_to do |format|
+      if @article.update(article_params)
+        format.html { redirect_to @article, notice: 'Article was updated successfully.' }
+        format.json { render json: @article, status: :ok, location: @article }
+      else
+        format.html { render 'edit' }
+        format.json { render json: @article.errors, status: :unprocessable_entity }
+      end
     end
   end
 
   def destroy
-    @article=Article.find(params[:id])
     @article.destroy
-    redirect_to articles_path
-  end
-
-  def search
-    if params[:search].present?
-      @articles = search_articles(params[:search])
-    else
-      @articles = Article.all
+    respond_to do |format|
+      format.html { redirect_to articles_path }
+      format.json { head :no_content }
     end
   end
 
+  # ... (other methods, if any)
+
   private
 
-  def search_articles(search_params)
-    search_query = "%#{search_params}%"
-    Article.joins(:user).where(
-      "LOWER(articles.title) LIKE ? OR LOWER(articles.topic) LIKE ? OR LOWER(users.username) LIKE ?",
-      search_query.downcase, search_query.downcase, search_query.downcase
-    )
+  def set_article
+    @article = Article.includes(:likes).find(params[:id])
   end
 
+  def article_params
+    params.require(:article).permit(:title, :description, :topic)
+  end
 end
