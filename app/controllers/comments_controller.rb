@@ -1,6 +1,6 @@
 class CommentsController < ApplicationController
   before_action :set_article
-  # before_action :authenticate_user!
+  before_action :authenticate_user!
 
   def index
     @comments = @article.comments

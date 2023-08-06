@@ -2,10 +2,10 @@ class ApplicationController < ActionController::Base
   include ActionController::Cookies
   protect_from_forgery with: :null_session, if: -> { request.format.json? }
 
-  # skip_before_action :verify_authenticity_token # Allow JSON requests to bypass CSRF protection
+  skip_before_action :verify_authenticity_token 
 
   helper_method :current_user, :logged_in?
-  # before_action :require_login, except: :home
+  before_action :require_login, except: :home
 
   def current_user
     @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]

@@ -8,7 +8,7 @@ class ArticlesController < ApplicationController
     @article.increment_views
 
     respond_to do |format|
-      format.html # This will be handled later or can be removed if not required
+      format.html 
       format.json { render json: @article.to_json(methods: :reading_time) }
     end
   end
@@ -32,7 +32,7 @@ class ArticlesController < ApplicationController
     end
 
     respond_to do |format|
-      format.html # This will be handled later or can be removed if not required
+      format.html 
       format.json { render json: @articles.to_json(methods: :reading_time) }
     end
   end
@@ -47,14 +47,14 @@ class ArticlesController < ApplicationController
   def new
     @article = Article.new
     respond_to do |format|
-      format.html # This will be handled later or can be removed if not required
+      format.html 
       format.json { render json: @article, methods: :reading_time }
     end
   end
 
   def edit
     respond_to do |format|
-      format.html # This will be handled later or can be removed if not required
+      format.html 
       format.json { render json: @article, methods: :reading_time }
     end
   end
@@ -100,7 +100,7 @@ class ArticlesController < ApplicationController
     @similar_articles = Article.where.not(id: @article.id, user_id: user_id).limit(5)
 
     respond_to do |format|
-      format.html # This will be handled later or can be removed if not required
+      format.html 
       format.json { render json: @similar_articles.to_json(methods: :reading_time) }
     end
   end

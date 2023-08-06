@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     resources :likes, only: [:create, :destroy]
     get 'likes', on: :member, to: 'likes#index'
   end
-
+  patch 'articles/:id', to: 'articles#update'
   resources :comments, only: [:show, :update, :destroy]
 
   get 'signup', to: 'users#new'
