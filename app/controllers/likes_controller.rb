@@ -1,5 +1,11 @@
 class LikesController < ApplicationController
-  before_action :require_login
+  # before_action :require_login
+
+  def index
+    @article = Article.find(params[:article_id])
+    @likes = @article.likes
+    render json: @likes
+  end
 
   def create
     @article = Article.find(params[:article_id])

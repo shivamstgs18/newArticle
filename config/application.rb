@@ -9,6 +9,8 @@ Bundler.require(*Rails.groups)
 module Testapp
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
     config.load_defaults 7.0
 
     # Configuration for the application, engines, and railties goes here.
@@ -18,5 +20,6 @@ module Testapp
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    config.api_only=false
   end
 end

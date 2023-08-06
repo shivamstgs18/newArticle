@@ -7,13 +7,6 @@
 <p><strong>Total Views:  </strong><%= @article.views %> |
 <strong>Likes:  </strong><%= @article.total_likes %></p>
 
-<% if current_user %>
-  <% if current_user.likes.include?(@article) %>
-    <%= link_to 'Unlike', like_path(current_user.likes.find_by(article_id: @article.id)), data: { turbo_method: :delete} %>
-  <% else %>
-    <%= link_to 'Like', likes_path(article_id: @article.id), method: :post %> 
-  <% end %>
-<% end %>
 
 
   <%= link_to 'Edit', edit_article_path(@article)%> |
