@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   def show
     @articles = @user.articles
     respond_to do |format|
-      format.html # This will be handled later or can be removed if not required
+      format.html 
       format.json { render json: { user: @user, articles: @articles } }
     end
   end
@@ -12,7 +12,7 @@ class UsersController < ApplicationController
   def index
     @users = User.all
     respond_to do |format|
-      format.html # This will be handled later or can be removed if not required
+      format.html 
       format.json { render json: @users }
     end
   end
@@ -20,14 +20,14 @@ class UsersController < ApplicationController
   def new
     @user = User.new
     respond_to do |format|
-      format.html # This will be handled later or can be removed if not required
+      format.html
       format.json { render json: @user }
     end
   end
 
   def edit
     respond_to do |format|
-      format.html # This will be handled later or can be removed if not required
+      format.html
       format.json { render json: @user }
     end
   end
