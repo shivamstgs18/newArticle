@@ -1,3 +1,5 @@
+# config/routes.rb
+
 Rails.application.routes.draw do
   root 'pages#home'
   get 'about', to: 'pages#about'
@@ -7,6 +9,7 @@ Rails.application.routes.draw do
       get 'search'
       get 'top_posts', to: 'articles#top_posts'
       get 'topics', to: 'articles#all_topics'
+      
     end
 
     member do
@@ -17,10 +20,12 @@ Rails.application.routes.draw do
     resources :likes, only: [:create, :destroy]
     get 'likes', on: :member, to: 'likes#index'
   end
+
   patch 'articles/:id', to: 'articles#update'
   resources :comments, only: [:show, :update, :destroy]
 
-  get 'signup', to: 'users#new'
+  post 'signup', to: 'users#create' 
+
   resources :users, except: [:new]
 
   get 'login', to: 'sessions#new'
@@ -29,6 +34,4 @@ Rails.application.routes.draw do
 
   get 'payments/revenue/:article_limit', to: 'payments#revenue'
   post 'payments/distribute/:total_revenue', to: 'payments#distribute'
-
-  
 end

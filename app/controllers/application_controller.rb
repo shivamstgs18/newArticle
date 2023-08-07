@@ -1,10 +1,6 @@
-class ApplicationController < ActionController::Base
+class ApplicationController < ActionController::API
   include ActionController::Cookies
-  protect_from_forgery with: :null_session, if: -> { request.format.json? }
 
-  skip_before_action :verify_authenticity_token 
-
-  helper_method :current_user, :logged_in?
   before_action :require_login, except: :home
 
   def current_user
@@ -19,15 +15,11 @@ class ApplicationController < ActionController::Base
 
   def require_login
     unless logged_in?
-      respond_to do |format|
-        format.html { 
-          flash[:alert] = 'Please log in to perform this action.'
-          redirect_to login_path
-        }
-        format.json { 
-          render json: { error: 'Please log in to perform this action.' }, status: :unauthorized
-        }
-      end
+      render json: { error: 'Please log in to perform this action.' }, status: :unauthorized
     end
+  end
+
+  def authenticate_user!
+    require_login
   end
 end

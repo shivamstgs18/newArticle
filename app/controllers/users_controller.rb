@@ -3,58 +3,38 @@ class UsersController < ApplicationController
 
   def show
     @articles = @user.articles
-    respond_to do |format|
-      format.html 
-      format.json { render json: { user: @user, articles: @articles } }
-    end
+    render json: { user: @user, articles: @articles }
   end
 
   def index
     @users = User.all
-    respond_to do |format|
-      format.html 
-      format.json { render json: @users }
-    end
+    render json: @users
   end
 
   def new
     @user = User.new
-    respond_to do |format|
-      format.html
-      format.json { render json: @user }
-    end
+    render json: @user
   end
 
   def edit
-    respond_to do |format|
-      format.html
-      format.json { render json: @user }
-    end
+    render json: @user
   end
 
   def update
-    respond_to do |format|
-      if @user.update(user_params)
-        format.html { redirect_to @user, notice: 'Your account information was successfully updated.' }
-        format.json { render json: @user, status: :ok, location: @user }
-      else
-        format.html { render 'edit' }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+    if @user.update(user_params)
+      render json: @user, status: :ok, location: @user
+    else
+      render json: @user.errors, status: :unprocessable_entity
     end
   end
 
   def create
     @user = User.new(user_params)
-    respond_to do |format|
-      if @user.save
-        session[:user_id] = @user.id
-        format.html { redirect_to articles_path, notice: "Welcome to the article app, #{@user.username}, you are successfully signed up." }
-        format.json { render json: @user, status: :created, location: @user }
-      else
-        format.html { render 'new' }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+    if @user.save
+      session[:user_id] = @user.id
+      render json: @user, status: :created, location: @user
+    else
+      render json: @user.errors, status: :unprocessable_entity
     end
   end
 

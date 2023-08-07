@@ -1,5 +1,3 @@
-# app/controllers/articles_controller.rb
-
 class ArticlesController < ApplicationController
   before_action :set_article, only: [:show, :edit, :update, :destroy]
   skip_before_action :set_article, only: [:top_posts]
@@ -7,10 +5,7 @@ class ArticlesController < ApplicationController
   def show
     @article.increment_views
 
-    respond_to do |format|
-      format.html 
-      format.json { render json: @article.to_json(methods: :reading_time) }
-    end
+    render json: @article.to_json(methods: :reading_time)
   end
 
   def index
@@ -31,78 +26,52 @@ class ArticlesController < ApplicationController
       @articles = @articles.joins(:user).order('users.username')
     end
 
-    respond_to do |format|
-      format.html 
-      format.json { render json: @articles.to_json(methods: :reading_time) }
-    end
+    render json: @articles.to_json(methods: :reading_time)
   end
 
   def top_posts
     @top_posts = Article.order(popularity_score: :desc).limit(10)
-    respond_to do |format|
-      format.json { render json: @top_posts.to_json(methods: :reading_time) }
-    end
+    render json: @top_posts.to_json(methods: :reading_time)
   end
 
   def new
     @article = Article.new
-    respond_to do |format|
-      format.html 
-      format.json { render json: @article, methods: :reading_time }
-    end
+    render json: @article, methods: :reading_time
   end
 
   def edit
-    respond_to do |format|
-      format.html 
-      format.json { render json: @article, methods: :reading_time }
-    end
+    render json: @article, methods: :reading_time
   end
 
   def create
     @article = Article.new(article_params)
     @article.user = current_user
 
-    respond_to do |format|
-      if @article.save
-        format.html { redirect_to @article, notice: 'Article was created successfully.' }
-        format.json { render json: @article, status: :created, location: @article }
-      else
-        format.html { render 'new' }
-        format.json { render json: @article.errors, status: :unprocessable_entity }
-      end
+    if @article.save
+      render json: @article, status: :created, location: @article
+    else
+      render json: @article.errors, status: :unprocessable_entity
     end
   end
 
   def update
-    respond_to do |format|
-      if @article.update(article_params)
-        format.html { redirect_to @article, notice: 'Article was updated successfully.' }
-        format.json { render json: @article, status: :ok, location: @article }
-      else
-        format.html { render 'edit' }
-        format.json { render json: @article.errors, status: :unprocessable_entity }
-      end
+    if @article.update(article_params)
+      render json: @article, status: :ok, location: @article
+    else
+      render json: @article.errors, status: :unprocessable_entity
     end
   end
 
   def destroy
     @article.destroy
-    respond_to do |format|
-      format.html { redirect_to articles_path }
-      format.json { head :no_content }
-    end
+    head :no_content
   end
 
   def similar_user_articles
     @article = Article.find(params[:id])
     user_id = @article.user_id
     @similar_articles = Article.where.not(id: @article.id, user_id: user_id).limit(5)
-
-    respond_to do |format|
-      format.html 
-      format.json { render json: @similar_articles.to_json(methods: :reading_time) }
-    end
+    render json: @similar_articles.to_json(methods: :reading_time)
   end
 
   def all_topics

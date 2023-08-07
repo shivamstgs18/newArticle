@@ -1,4 +1,5 @@
 class PaymentsController < ApplicationController
+  before_action :require_login
 
   def revenue
     article_limit = params[:article_limit].to_i
@@ -15,15 +16,12 @@ class PaymentsController < ApplicationController
   private
 
   def calculate_revenue(article_limit)
-
     articles = Article.all.limit(article_limit)
     total_revenue = articles.sum(&:revenue)
-
     total_revenue
   end
 
   def distribute_revenue(total_revenue)
-
     viewed_articles = current_user.articles.where('created_at >= ?', Date.today)
     distribution_per_article = total_revenue / viewed_articles.size
     viewed_articles.each do |article|
