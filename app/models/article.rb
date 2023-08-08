@@ -11,7 +11,7 @@ class Article < ApplicationRecord
   def revenue
 
     views_revenue = views * 1
-    likes_revenue = likes * 1
+    likes_revenue = likes.count * 1
 
     total_revenue = views_revenue + likes_revenue
 

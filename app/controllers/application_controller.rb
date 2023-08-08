@@ -1,10 +1,8 @@
 class ApplicationController < ActionController::API
-  include ActionController::Cookies
-
   before_action :require_login, except: :home
 
   def current_user
-    @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
+    @current_user ||= User.find_by(id: decoded_token['user_id']) if decoded_token
   end
 
   def logged_in?
@@ -14,12 +12,21 @@ class ApplicationController < ActionController::API
   private
 
   def require_login
-    unless logged_in?
-      render json: { error: 'Please log in to perform this action.' }, status: :unauthorized
+    render json: { error: 'Please log in to perform this action.'}, status: :unauthorized unless logged_in?
+  end
+
+  def decoded_token
+    if authorization_header
+      token = authorization_header.split(' ')[1]
+      begin
+        JWT.decode(token,Rails.application.credentials.secret_key_base, true, algorithm: 'HS256')[0]
+      rescue JWT::DecodeError
+        nil
+      end
     end
   end
 
-  def authenticate_user!
-    require_login
+  def authorization_header
+    request.headers['Authorization']
   end
 end

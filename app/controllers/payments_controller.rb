@@ -1,10 +1,18 @@
 class PaymentsController < ApplicationController
-  before_action :require_login
 
-  def revenue
+  before_action :require_login
+  require 'stripe'
+
+  def create
     article_limit = params[:article_limit].to_i
     total_revenue = calculate_revenue(article_limit)
-    render json: { revenue: total_revenue }
+
+    intent = Stripe::PaymentIntent.create(
+      amount: total_revenue,
+      currency: 'usd'
+    )
+
+    render json: { client_secret: intent.client_secret }
   end
 
   def distribute
@@ -16,10 +24,18 @@ class PaymentsController < ApplicationController
   private
 
   def calculate_revenue(article_limit)
-    articles = Article.all.limit(article_limit)
-    total_revenue = articles.sum(&:revenue)
+    pricing_tiers = {
+      1 => 0,
+      3 => 3,
+      5 => 5,
+      10 => 10
+    }
+    applicable_tier = pricing_tiers.keys.select { |tier| tier <= article_limit }.max
+    articles = Article.all.limit(applicable_tier)
+    total_revenue = pricing_tiers[applicable_tier] * applicable_tier
     total_revenue
   end
+  
 
   def distribute_revenue(total_revenue)
     viewed_articles = current_user.articles.where('created_at >= ?', Date.today)

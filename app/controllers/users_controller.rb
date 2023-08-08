@@ -1,24 +1,29 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update]
 
+
   def show
     @articles = @user.articles
     render json: { user: @user, articles: @articles }
   end
+
 
   def index
     @users = User.all
     render json: @users
   end
 
+
   def new
     @user = User.new
     render json: @user
   end
 
+
   def edit
     render json: @user
   end
+
 
   def update
     if @user.update(user_params)
@@ -27,6 +32,7 @@ class UsersController < ApplicationController
       render json: @user.errors, status: :unprocessable_entity
     end
   end
+
 
   def create
     @user = User.new(user_params)
@@ -38,11 +44,14 @@ class UsersController < ApplicationController
     end
   end
 
+
   private
+
 
   def set_user
     @user = User.find(params[:id])
   end
+
 
   def user_params
     params.require(:user).permit(:username, :email, :password)

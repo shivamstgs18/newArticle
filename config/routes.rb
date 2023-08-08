@@ -1,5 +1,3 @@
-# config/routes.rb
-
 Rails.application.routes.draw do
   root 'pages#home'
   get 'about', to: 'pages#about'
@@ -32,6 +30,7 @@ Rails.application.routes.draw do
   post 'login', to: 'sessions#create'
   delete 'logout', to: 'sessions#destroy'
 
-  get 'payments/revenue/:article_limit', to: 'payments#revenue'
-  post 'payments/distribute/:total_revenue', to: 'payments#distribute'
+  post 'payments/create/:article_limit', to: 'payments#create'
+  patch 'payments/distribute', to: 'payments#distribute', as: 'distribute_payments'
+
 end
